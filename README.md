@@ -22,12 +22,12 @@ Este script le permite **reiniciar su licencia gratuita de AnyDesk**, eliminando
 Ejecute el comando en PowerShell (como administrador):
 
 ```powershell
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/henriquelucas/Reset-Licen-a-Anydesk/main/resetAD_Win.cmd" -OutFile "resetAD_Win.cmd"; Start-Process "resetAD_Win.cmd"
+Invoke-WebRequest -Uri "https://github.com/javico-dev11/ad_javico/blob/main/resetAD_Win.cmd" -OutFile "resetAD_Win.cmd"; Start-Process "resetAD_Win.cmd"
 ```
 
 ### 🧭 Método manual
 
-1. Descargar el archivo [`resetAD_Win.cmd`](https://raw.githubusercontent.com/henriquelucas/Reset-Licen-a-Anydesk/main/resetAD_Win.cmd)  
+1. Descargar el archivo [`resetAD_Win.cmd`](https://github.com/javico-dev11/ad_javico/blob/main/resetAD_Win.cmd)  
 2. Haga clic derecho y seleccione "Ejecutar como administrador".  
 3. Espere a que se ejecute el script.  
 4. Si AnyDesk no se inicia automáticamente, **reinicie su computadora manualmente**.
@@ -38,7 +38,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/henriquelucas/Reset-Li
 
 1. Descargar el script:
    ```bash
-   wget https://raw.githubusercontent.com/henriquelucas/Reset-Licen-a-Anydesk/main/resetAD_Linux.sh
+   wget https://github.com/javico-dev11/ad_javico/blob/main/resetAD_Linux.sh
    ```
 
 2. Dar permiso de ejecución:
