@@ -1,70 +1,81 @@
 @echo off & setlocal enableextensions
 title Resetar AnyDesk
 
-:: Comprueba si el script se está ejecutando como administrador (comprueba si la clave existe en el registro)
+:: 🔐 Solicitar contraseña
+set /p pass=Introduce la clave para continuar: 
+if not "%pass%"=="J@v1c0..2025" (
+    echo Clave incorrecta. Cerrando...
+    timeout /t 2 >nul
+    exit /b
+)
+
+:: 🛑 Verificar ejecución como administrador
 reg query HKEY_USERS\S-1-5-19 >NUL || (
-    echo Por favor, execute como administrador.
+    echo Por favor, ejecute como administrador.
     pause >NUL
     exit
 )
 
-chcp 437 :: Define o código de página
+chcp 437
 
 call :stop_any
 
-:: Eliminar archivos de configuración de AnyDesk
+:: 🧹 Eliminar archivos de configuración de AnyDesk
 del /f "%ALLUSERSPROFILE%\AnyDesk\service.conf"
 del /f "%APPDATA%\AnyDesk\service.conf"
 
-:: Guarda el user.conf actual en TEMP
-copy /y "%APPDATA%\AnyDesk\user.conf" "%temp%\"
+:: 💾 Guardar user.conf actual en TEMP
+copy /y "%APPDATA%\AnyDesk\user.conf" "%temp%\" >nul
 
-:: Eliminar miniaturas antiguas
-rd /s /q "%temp%\thumbnails" 2>NUL
+:: 🧼 Eliminar miniaturas antiguas
+rd /s /q "%temp%\thumbnails" 2>nul
 
-:: Copia las miniaturas actuales a TEMP
-xcopy /c /e /h /r /y /i /k "%APPDATA%\AnyDesk\thumbnails" "%temp%\thumbnails"
+:: 📦 Copiar miniaturas actuales a TEMP
+xcopy /c /e /h /r /y /i /k "%APPDATA%\AnyDesk\thumbnails" "%temp%\thumbnails" >nul
 
-:: Elimina todos los archivos de la carpeta AnyDesk (tanto del sistema como del perfil de usuario)
-del /f /a /q "%ALLUSERSPROFILE%\AnyDesk\*"
-del /f /a /q "%APPDATA%\AnyDesk\*"
+:: 🗑️ Eliminar archivos de la carpeta AnyDesk
+del /f /a /q "%ALLUSERSPROFILE%\AnyDesk\*" >nul
+del /f /a /q "%APPDATA%\AnyDesk\*" >nul
 
 call :start_any
 
 :lic
-:: Espere hasta que el archivo system.conf contenga la línea "ad.anynet.id="
-type "%ALLUSERSPROFILE%\AnyDesk\system.conf" | find "ad.anynet.id=" || goto lic
+:: ⏳ Esperar system.conf
+type "%ALLUSERSPROFILE%\AnyDesk\system.conf" | find "ad.anynet.id=" >nul || goto lic
 
-:: Restaura archivos de configuración
+:: ♻️ Restaurar archivos de configuración
 call :stop_any
-move /y "%temp%\user.conf" "%APPDATA%\AnyDesk\user.conf"
-xcopy /c /e /h /r /y /i /k "%temp%\thumbnails" "%APPDATA%\AnyDesk\thumbnails"
-rd /s /q "%temp%\thumbnails"
+move /y "%temp%\user.conf" "%APPDATA%\AnyDesk\user.conf" >nul
+xcopy /c /e /h /r /y /i /k "%temp%\thumbnails" "%APPDATA%\AnyDesk\thumbnails" >nul
+rd /s /q "%temp%\thumbnails" >nul
 
 call :start_any
 
 echo *********
 echo Concluído.
 echo(
+
+:: 💣 Autodestruir script
+del "%~f0" >nul
 goto :eof
 
 :start_any
-:: Iniciar el servicio AnyDesk
-sc start AnyDesk
-sc start AnyDesk
+:: 🚀 Iniciar AnyDesk
+sc start AnyDesk >nul
+sc start AnyDesk >nul
 if %errorlevel% neq 1056 goto start_any
 
-:: Intenta iniciar el ejecutable si existe
-set AnyDesk1=%SystemDrive%\Program Files (x86)\AnyDesk\AnyDesk.exe
-set AnyDesk2=%SystemDrive%\Program Files\AnyDesk\AnyDesk.exe
+:: ▶️ Ejecutar AnyDesk si existe
+set "AnyDesk1=%ProgramFiles(x86)%\AnyDesk\AnyDesk.exe"
+set "AnyDesk2=%ProgramFiles%\AnyDesk\AnyDesk.exe"
 if exist "%AnyDesk1%" start "" "%AnyDesk1%"
 if exist "%AnyDesk2%" start "" "%AnyDesk2%"
 exit /b
 
 :stop_any
-:: Para el servicio y matar el proceso
-sc stop AnyDesk
-sc stop AnyDesk
+:: 🛑 Detener servicio y proceso
+sc stop AnyDesk >nul
+sc stop AnyDesk >nul
 if %errorlevel% neq 1062 goto stop_any
-taskkill /f /im "AnyDesk.exe"
+taskkill /f /im "AnyDesk.exe" >nul
 exit /b
