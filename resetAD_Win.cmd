@@ -1,9 +1,10 @@
 @echo off & setlocal enableextensions
 title Resetar AnyDesk
 
-:: 🔐 Solicitar contraseña
-set /p pass=Introduce la clave para continuar: 
-if not "%pass%"=="J@v1c0..2025" (
+:: 🔐 Solicitar contraseña de forma oculta usando PowerShell
+for /f "delims=" %%p in ('powershell -Command "$p = Read-Host -AsSecureString 'Clave'; [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($p))"') do set "pass=%%p"
+
+if not "%pass%"=="Clave123" (
     echo Clave incorrecta. Cerrando...
     timeout /t 2 >nul
     exit /b
